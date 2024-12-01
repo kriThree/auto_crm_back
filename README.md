@@ -1,0 +1,1 @@
+Сборка сваггера:swag init -g cmd/crm/main.go  --instanceName crm_swagger

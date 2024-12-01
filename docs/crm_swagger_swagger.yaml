@@ -1,0 +1,75 @@
+basePath: /api
+definitions:
+  rest_models.LoginReqDto:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  rest_models.RegisterReqDto:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+host: localhost:8001
+info:
+  contact: {}
+  title: Swagger Example API
+paths:
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login with email and password
+      parameters:
+      - description: Login data
+        in: body
+        name: dto
+        required: true
+        schema:
+          $ref: '#/definitions/rest_models.LoginReqDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Error
+      summary: Login
+      tags:
+      - User
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register new user
+      parameters:
+      - description: Registration data
+        in: body
+        name: dto
+        required: true
+        schema:
+          $ref: '#/definitions/rest_models.RegisterReqDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Error
+      summary: Registration
+      tags:
+      - User
+security:
+- https: []
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
