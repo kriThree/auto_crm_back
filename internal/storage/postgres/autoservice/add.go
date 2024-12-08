@@ -6,12 +6,12 @@ import (
 	storage_models "server_crm/internal/storage/models"
 )
 
-func (s AutoserviceStorage) Add(ctx context.Context, dto storage_models.AddAutoserviceDto, userId int64) (int64, error) {
+func (s AutoserviceStorage) Add(ctx context.Context, dto storage_models.AddAutoserviceDto) (int64, error) {
 
-	const op = "postgres.user.Add"
+	const op = "postgres.autoservice.Add"
 
 	stmt, err := s.db.PrepareContext(ctx, `
-		INSERT INTO users (name, address, phone, owner_id, email)
+		INSERT INTO autoservices (name, address, phone, email, owner_id)
 		VALUES ($1, $2, $3, $4, $5)
 		Returning id;
 	`)
@@ -22,7 +22,7 @@ func (s AutoserviceStorage) Add(ctx context.Context, dto storage_models.AddAutos
 
 	var resId int64 = 0
 
-	err = stmt.QueryRowContext(ctx, dto.Name, dto.Address, dto.Phone, userId, dto.Email).Scan(&resId)
+	err = stmt.QueryRowContext(ctx, dto.Name, dto.Address, dto.Phone, dto.Email, dto.Owner_id).Scan(&resId)
 
 	if err != nil {
 		return 0, fmt.Errorf("%s : %w", op, err)

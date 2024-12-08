@@ -7,7 +7,7 @@ import (
 	storage_models "server_crm/internal/storage/models"
 )
 
-func (s UserStorage) Read(ctx context.Context) ([]storage_models.User, error) {
+func (s UserStorage) Get(ctx context.Context) ([]storage_models.User, error) {
 	return nil, nil
 }
 
@@ -18,7 +18,7 @@ func (s UserStorage) FindByEmail(ctx context.Context, email string) (storage_mod
 	stmt, err := s.db.PrepareContext(ctx, `
 		SELECT id, name, email, password, created_at
 		FROM users
-		WHERE
+		WHERE email = $1
 	`)
 
 	if err != nil {

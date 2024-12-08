@@ -8,13 +8,13 @@ import (
 
 	"github.com/gorilla/mux"
 )
-
+//Интрефейс по месту использования как пример, далее будут использоваться реализации с интерфейсами по месту объявления
 type UserUsecase interface {
 	Register(ctx context.Context, dto models.RegisterUserDto) (string, string, models.User, error)
 	Update(ctx context.Context, userId int64, dto storage_models.UpdateUserDto) error
 	Login(ctx context.Context, email string, password string) (string, string, models.User, error)
 	GetOne(ctx context.Context, id int64) (models.User, error)
-	Get(ctx context.Context) ([]storage_models.User, error)
+	Get(ctx context.Context) ([]models.User, error)
 	Authorize(ctx context.Context, accessToken string, refreshToken string) (string, string, models.User, error)
 }
 type UserController struct {

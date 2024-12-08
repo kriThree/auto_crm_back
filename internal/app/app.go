@@ -7,7 +7,7 @@ import (
 	app_swaggerUpdater "server_crm/internal/app/swaggerUpdater"
 	"server_crm/internal/config"
 	user_crypt "server_crm/internal/lib/crypt"
-	user_serivce "server_crm/internal/services/user"
+	user_serivce "server_crm/internal/services/realize/user"
 	storage_postgres "server_crm/internal/storage/postgres"
 )
 
@@ -19,11 +19,11 @@ type App struct {
 func New(conf *config.Config, l *slog.Logger) *App {
 
 	storage, err := storage_postgres.New(storage_postgres.DBSettings{
-		conf.DB.Host,
-		conf.DB.Port,
-		conf.DB.User,
-		conf.DB.Password,
-		conf.DB.DbName,
+		Host:     conf.DB.Host,
+		Port:     conf.DB.Port,
+		User:     conf.DB.User,
+		Password: conf.DB.Password,
+		DbName:   conf.DB.DbName,
 	}, l)
 
 	if err != nil {
@@ -31,7 +31,12 @@ func New(conf *config.Config, l *slog.Logger) *App {
 	}
 
 	userCrypter := user_crypt.NewJWTManager(conf.Jwt.Secret, conf.Jwt.Duration)
-	userService := user_serivce.New(l, storage.User, userCrypter)
+	
+	userService := user_serivce.New(l, storage.User, userCrypter, user_serivce.RolesProvider{
+		Admin:  storage.Role.Admin,
+		Owner:  storage.Role.Owner,
+		Client: storage.Role.Client,
+	})
 
 	app_migrator.New(l, storage).MustRun()
 	app_swaggerUpdater.New(l).MustRun()

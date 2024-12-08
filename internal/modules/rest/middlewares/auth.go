@@ -12,7 +12,7 @@ import (
 )
 
 type UserDecrypter interface {
-	Validate(ctx context.Context, tokenStr string) (userId int64, err error)
+	Validate(ctx context.Context, tokenStr string) (userId int64, role string, err error)
 }
 
 func AuthMiddleware(usC UserDecrypter) mux.MiddlewareFunc {
@@ -24,14 +24,14 @@ func AuthMiddleware(usC UserDecrypter) mux.MiddlewareFunc {
 				return
 			}
 			fmt.Println(tokenStr)
-			userId, err := usC.Validate(r.Context(), tokenStr[1])
+			userId,role, err := usC.Validate(r.Context(), tokenStr[1])
 			if err != nil {
 				rest_errors.ErrorsHandler(w, http.StatusUnauthorized, "Unauthorized")
 				return
 			}
 			oldContext := r.Context()
 
-			auxiliary.SetUserInfo(&oldContext, userId)
+			auxiliary.SetUserInfo(&oldContext, userId,role)
 			next.ServeHTTP(w, r.WithContext(oldContext))
 		})
 	}

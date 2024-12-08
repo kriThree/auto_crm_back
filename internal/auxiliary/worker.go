@@ -1,6 +1,7 @@
 package auxiliary
 
 import (
+	"context"
 	"sync"
 )
 
@@ -10,9 +11,10 @@ var (
 
 type Context struct {
 	PushError func(err error)
+	context.Context
 }
 
-func NewWorker[A interface{}, R interface{}](slice []A, callback func(Context, A) R) ([]R, error) {
+func NewWorker[A interface{}, R interface{}](ctx context.Context, slice []A, callback func(Context, A) R) ([]R, error) {
 
 	if len(slice) == 0 {
 		return nil, nil
@@ -27,14 +29,15 @@ func NewWorker[A interface{}, R interface{}](slice []A, callback func(Context, A
 		done <- err
 	}
 
-	ctx := Context{
+	aCtx := Context{
 		PushError: pusher,
+		Context:   ctx,
 	}
 
 	count <- 1
 
 	for v, i := range slice {
-		go goroutineMaker(i, newSlice, v, count, done, callback, ctx)
+		go goroutineMaker(i, newSlice, v, count, done, callback, aCtx)
 	}
 
 	err := <-done

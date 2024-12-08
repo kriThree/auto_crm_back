@@ -1,4 +1,4 @@
-package crypt
+package user_crypt
 
 import (
 	"context"
@@ -10,8 +10,7 @@ import (
 
 type UserClaims struct {
 	UserID int64
-	Email  string
-	Name   string
+	Role   string
 	jwt.RegisteredClaims
 }
 
@@ -27,9 +26,10 @@ func NewJWTManager(secretKey string, duration time.Duration) *JWTManager {
 	}
 }
 
-func (j *JWTManager) Generate(_ context.Context, userID int64) (string, string, error) {
+func (j *JWTManager) Generate(_ context.Context, userID int64, role string) (string, string, error) {
 	accessClaims := &UserClaims{
 		UserID: userID,
+		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.tokenDuration)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -37,6 +37,7 @@ func (j *JWTManager) Generate(_ context.Context, userID int64) (string, string, 
 	}
 	refreshClaims := &UserClaims{
 		UserID: userID,
+		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(j.tokenDuration * 10)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -54,20 +55,20 @@ func (j *JWTManager) Generate(_ context.Context, userID int64) (string, string, 
 	return accessToken, refreshToken, nil
 }
 
-func (j *JWTManager) Validate(ctx context.Context, tokenStr string) (userId int64, err error) {
+func (j *JWTManager) Validate(ctx context.Context, tokenStr string) (userId int64, role string, err error) {
 	token, err := jwt.ParseWithClaims(tokenStr, &UserClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(j.secretKey), nil
 	})
 
 	if err != nil {
-		return 0, errors.New("invalid token")
+		return 0,"", errors.New("invalid token")
 	}
 
 	claims, ok := token.Claims.(*UserClaims)
 
 	if ok && token.Valid {
-		return claims.UserID, nil
+		return claims.UserID,claims.Role, nil
 	} else {
-		return 0, errors.New("incorrect token")
+		return 0,"", errors.New("incorrect token")
 	}
 }
