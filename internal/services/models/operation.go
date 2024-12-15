@@ -10,6 +10,7 @@ type OperationRepo interface {
 	GetForCar(ctx context.Context, carId int64) (operations []Operation, err error)
 	GetForWork(ctx context.Context, workId int64) ([]Operation, error)
 	GetForAutoservice(ctx context.Context, autoserviceId int64) (operations []Operation, err error)
+	GetById(ctx context.Context, id int64) (operation Operation, err error)
 	Update(ctx context.Context, dto storage_models.UpdateOperationDto) error
 	Delete(ctx context.Context, id int64) error
 }

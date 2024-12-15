@@ -7,8 +7,6 @@ import (
 	"server_crm/internal/config"
 	"server_crm/internal/lib/log"
 	"syscall"
-
-	_ "github.com/swaggo/echo-swagger/example/docs"
 )
 
 // @title           Swagger Example API

@@ -29,7 +29,7 @@ func (h UserController) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if dto.Email == "" || dto.Password == "" || dto.Name == "" {
+	if dto.Email == "" || dto.Password == "" || dto.Name == "" || dto.Role == ""{
 		rest_utils.ErrorsHandler(w, http.StatusBadRequest, "Not valid values of request body")
 		return
 	}
@@ -38,6 +38,7 @@ func (h UserController) Register(w http.ResponseWriter, r *http.Request) {
 		Name:     dto.Name,
 		Email:    dto.Email,
 		Password: dto.Password,
+		Role:     dto.Role,
 	})
 
 	if err != nil {

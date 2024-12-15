@@ -7,9 +7,9 @@ import (
 
 func (s WorkService) fromStorageToDomain(storage_work storage_models.Work) models.Work {
 	return models.Work{
-		Id:          storage_work.Id,
-		Cost:        storage_work.Cost,
-		Name:        storage_work.Name,
-		CatalogId:   storage_work.CatalogId,
+		Id:     storage_work.Id,
+		Cost:   storage_work.Cost,
+		Name:   storage_work.Name,
+		CatalogId: storage_work.CatalogId,
 	}
 }

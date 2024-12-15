@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"server_crm/internal/auxiliary"
-	rest_errors "server_crm/internal/modules/rest/utils"
+	"server_crm/internal/modules/rest/utils"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -26,7 +26,7 @@ func AuthMiddleware(usC UserDecrypter) mux.MiddlewareFunc {
 			fmt.Println(tokenStr)
 			userId,role, err := usC.Validate(r.Context(), tokenStr[1])
 			if err != nil {
-				rest_errors.ErrorsHandler(w, http.StatusUnauthorized, "Unauthorized")
+				rest_utils.ErrorsHandler(w, http.StatusUnauthorized, "Unauthorized")
 				return
 			}
 			oldContext := r.Context()

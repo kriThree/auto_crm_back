@@ -49,7 +49,7 @@ func (s OperationStorage) getByQuery(ctx context.Context, op string, query strin
 	}
 	return operations, nil
 }
-func (s OperationStorage) GetById(ctx context.Context) (storage_models.Operation, error) {
+func (s OperationStorage) GetById(ctx context.Context, id int64) (storage_models.Operation, error) {
 	const op = "postgres.operation.GetById"
 
 	stmt, err := s.db.PrepareContext(ctx,
@@ -64,7 +64,7 @@ func (s OperationStorage) GetById(ctx context.Context) (storage_models.Operation
 
 	var operation storage_models.Operation
 
-	err = stmt.QueryRowContext(ctx, 1).Scan(&operation.Id, &operation.Description, &operation.CarId, &operation.WorkId, &operation.AutoserviceId)
+	err = stmt.QueryRowContext(ctx, id).Scan(&operation.Id, &operation.Description, &operation.CarId, &operation.WorkId, &operation.AutoserviceId)
 
 	if err != nil {
 		return storage_models.Operation{}, fmt.Errorf("%s : %w", op, err)

@@ -39,32 +39,30 @@ func (s OperationService) fromStorageToDomain(storage_operation storage_models.O
 		},
 	}
 }
-func (s OperationService) fromStorageToDomainWithQuery(ctx auxiliary.Context, storage_operation storage_models.Operation) models.Operation {
+func (s OperationService) fromStorageToDomainWithQuery(ctx context.Context, storage_operation storage_models.Operation) (models.Operation, error) {
 
 	const op = "service.operation.fromStorageToDomainWithQuery"
 
 	storage_car, err := s.crP.GetById(ctx, storage_operation.CarId)
 
 	if err != nil {
-		ctx.PushError(fmt.Errorf("%s: %w", op, err))
-		return models.Operation{}
+		return models.Operation{}, fmt.Errorf("%s: %w", op, err)
 	}
 
 	storage_work, err := s.wkP.GetById(ctx, storage_operation.WorkId)
 
 	if err != nil {
-		ctx.PushError(fmt.Errorf("%s: %w", op, err))
-		return models.Operation{}
+
+		return models.Operation{}, fmt.Errorf("%s: %w", op, err)
 	}
 
 	storage_autoservice, err := s.auP.GetById(ctx, storage_operation.AutoserviceId)
 
 	if err != nil {
-		ctx.PushError(fmt.Errorf("%s: %w", op, err))
-		return models.Operation{}
+		return models.Operation{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return s.fromStorageToDomain(storage_operation, storage_car, storage_work, storage_autoservice)
+	return s.fromStorageToDomain(storage_operation, storage_car, storage_work, storage_autoservice), nil
 }
 
 func (s OperationService) fromStorageToDomainArray(ctx context.Context, storage_operations []storage_models.Operation) ([]models.Operation, error) {
@@ -72,7 +70,14 @@ func (s OperationService) fromStorageToDomainArray(ctx context.Context, storage_
 	operations, err := auxiliary.NewWorker(
 		ctx,
 		storage_operations,
-		s.fromStorageToDomainWithQuery,
+		func(ctx auxiliary.Context, storage_operation storage_models.Operation) models.Operation {
+			operation, err := s.fromStorageToDomainWithQuery(ctx, storage_operation)
+			if err != nil {
+				ctx.PushError(err)
+				return models.Operation{}
+			}
+			return operation
+		},
 	)
 
 	if err != nil {

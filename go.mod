@@ -9,7 +9,6 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.22.1
-	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/http-swagger v1.3.4
 	github.com/swaggo/swag v1.16.4
 	golang.org/x/crypto v0.27.0

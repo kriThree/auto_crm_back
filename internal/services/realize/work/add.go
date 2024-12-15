@@ -14,6 +14,7 @@ func (s WorkService) Add(ctx context.Context, dto storage_models.AddWorkDto) (id
 		slog.String("op", op),
 		slog.String("name", dto.Name),
 		slog.Int("cost", dto.Cost),
+		slog.Int64("catalog_id", dto.CatalogId),
 	)
 
 	log.Info("Start adding work")

@@ -6,6 +6,7 @@ import (
 	"server_crm/internal/modules/rest"
 	user_controller "server_crm/internal/modules/rest/controllers/user"
 	"server_crm/internal/modules/rest/middlewares"
+	"server_crm/internal/services/models"
 )
 
 type App struct {
@@ -18,10 +19,22 @@ func New(
 	port int,
 	log *slog.Logger,
 	userService user_controller.UserUsecase,
+	autoserviceService models.AutoserviceRepo,
+	carService models.CarRepo,
+	catalogService models.CatalogRepo,
+	operationService models.OperationRepo,
+	workService models.WorkRepo,
 	userCrypter middlewares.UserDecrypter,
 ) *App {
 
-	restController := rest.New(userService, userCrypter)
+	restController := rest.New(userService,
+		autoserviceService,
+		carService,
+		catalogService,
+		operationService,
+		workService,
+		userCrypter,
+	)
 
 	return &App{
 		port:           port,

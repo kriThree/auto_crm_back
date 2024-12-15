@@ -4,8 +4,14 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	autoservice_controller "server_crm/internal/modules/rest/controllers/autoservice"
+	car_controller "server_crm/internal/modules/rest/controllers/car"
+	catalog_controller "server_crm/internal/modules/rest/controllers/catalog"
+	operation_controller "server_crm/internal/modules/rest/controllers/operation"
 	user_controller "server_crm/internal/modules/rest/controllers/user"
+	work_controller "server_crm/internal/modules/rest/controllers/work"
 	"server_crm/internal/modules/rest/middlewares"
+	storage_models "server_crm/internal/storage/models"
 
 	_ "server_crm/docs"
 
@@ -18,7 +24,12 @@ type Controller struct {
 }
 
 func New(
-	uc user_controller.UserUsecase,
+	userUsecase user_controller.UserUsecase,
+	autoserviceUsecase autoservice_controller.AutoserviceUsecase,
+	carUsecase car_controller.CarUsecase,
+	catalogUsecase catalog_controller.CatalogUsecase,
+	operationUsecase operation_controller.OperationUsecase,
+	workUsecase work_controller.WorkUsecase,
 	usC middlewares.UserDecrypter,
 ) *Controller {
 
@@ -27,16 +38,32 @@ func New(
 	// router.Use(middleware.Logger())
 	// router.Use(middleware.Recover())
 	router.Use(middlewares.CorsMiddleware())
-	
+
 	router.Methods(http.MethodOptions).HandlerFunc(OptionsOK)
 
-	apiRouter := router.PathPrefix("").Subrouter()
+	apiRouter := router.PathPrefix("/api").Subrouter()
 
 	authMiddleware := middlewares.AuthMiddleware(usC)
 
-	user_controller.Register(uc, authMiddleware, apiRouter.PathPrefix("/user").Subrouter())
+	ownerMiddleware, _ := middlewares.CheckRole([]string{storage_models.ROLE_OWNER})
 
-	router.PathPrefix("/docs").Handler(httpSwagger.WrapHandler)
+	clientMiddleware, _ := middlewares.CheckRole([]string{storage_models.ROLE_CLIENT})
+
+	adminMiddleware, _ := middlewares.CheckRole([]string{storage_models.ROLE_ADMIN})
+	
+	allMiddleware, _ := middlewares.CheckRole([]string{storage_models.ROLE_ADMIN, storage_models.ROLE_OWNER, storage_models.ROLE_CLIENT})
+
+	autoservice_controller.Register(apiRouter.PathPrefix("/autoservices").Subrouter(), autoserviceUsecase, authMiddleware, ownerMiddleware)
+	
+	user_controller.Register(userUsecase, authMiddleware, apiRouter.PathPrefix("/user").Subrouter())
+
+	car_controller.Register(apiRouter.PathPrefix("/cars").Subrouter(), carUsecase, authMiddleware, clientMiddleware)
+	catalog_controller.Register(apiRouter.PathPrefix("/catalogs").Subrouter(), catalogUsecase, authMiddleware, adminMiddleware)	
+	operation_controller.Register(apiRouter.PathPrefix("/operations").Subrouter(), operationUsecase, authMiddleware, allMiddleware)
+	work_controller.Register(apiRouter.PathPrefix("/works").Subrouter(), workUsecase, authMiddleware, adminMiddleware)
+
+
+	router.PathPrefix("/docs/").Handler(httpSwagger.WrapHandler)
 
 	return &Controller{
 		Router: router,

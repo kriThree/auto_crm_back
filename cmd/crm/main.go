@@ -9,17 +9,15 @@ import (
 	"server_crm/internal/lib/log"
 	"syscall"
 
-	_ "github.com/swaggo/echo-swagger/example/docs"
 )
 
-// @title           Swagger Example API
+// @title 				Swagger Example API
 // @host localhost:8001
 // @BasePath /api
-// @Security https
+// @Security http
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
-
 func main() {
 	conf := config.MustLoad()
 	log := log.LogInit()

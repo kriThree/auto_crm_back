@@ -16,7 +16,7 @@ func (s WorkService) Update(ctx context.Context, dto storage_models.UpdateWorkDt
 	log.Info("Start updating work",
 		slog.String("name", dto.Name),
 		slog.Int("cost", dto.Cost),
-		slog.Int64("catalog_id", dto.CatalogId),
+		slog.Int64("work_id", dto.CatalogId),
 		slog.Int64("id", dto.Id),
 	)
 

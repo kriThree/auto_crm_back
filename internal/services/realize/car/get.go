@@ -19,6 +19,7 @@ func (s CarService) Get(ctx context.Context, clientId int64) ([]models.Car, erro
 
 	storageCars, err := s.crP.GetByClientId(ctx, clientId)
 	if err != nil {
+		log.Error("Get cars error", slog.Any("error", err.Error()))
 		return nil, err
 	}
 
@@ -33,4 +34,28 @@ func (s CarService) Get(ctx context.Context, clientId int64) ([]models.Car, erro
 	)
 
 	return cars, nil
+}
+
+
+func (s CarService) GetById(ctx context.Context, id int64) (models.Car, error) {
+
+	const op = "service.car.GetById"
+
+	log := s.l.With(
+		slog.String("op", op),
+		slog.Int64("id", id),
+	)
+
+	log.Info("Start getting car by id")
+
+	storageCar, err := s.crP.GetById(ctx, id)
+	if err != nil {
+		return models.Car{}, err
+	}
+
+	log.Info("Get car by id success",
+		slog.Int64("id", id),
+	)
+
+	return s.fromStorageToDomain(storageCar), nil
 }

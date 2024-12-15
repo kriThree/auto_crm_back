@@ -7,7 +7,7 @@ type OperationDomain interface {
 	GetByCarId(ctx context.Context, carId int64) (operations []Operation, err error)
 	GetByAutoserviceId(ctx context.Context, autoserviceId int64) (operations []Operation, err error)
 	GetByWorkId(ctx context.Context, workId int64) (operations []Operation, err error)
-	GetById(ctx context.Context) (catalog Operation, err error)
+	GetById(ctx context.Context, id int64) (catalog Operation, err error)
 	Update(ctx context.Context, dto UpdateOperationDto) error
 	Delete(ctx context.Context, id int64) error
 }

@@ -5,6 +5,9 @@ import (
 )
 
 func GetUserInfo(c context.Context) (int64, string) {
+	if c.Value("userId") == nil || c.Value("role") == nil {
+		return 0, ""
+	}
 	return c.Value("userId").(int64) , c.Value("role").(string)
 }
 

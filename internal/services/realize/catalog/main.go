@@ -15,6 +15,7 @@ type CatalogService struct {
 type AdminProvider = storage_models.RoleDomain
 type CatalogProvider = storage_models.CatalogDomain
 type workProvider = storage_models.WorkDomain
+
 func New(catalogProvider CatalogProvider, adminProvider AdminProvider,workProvider workProvider,l *slog.Logger) models.CatalogRepo {
 	return CatalogService{
 		ctP: catalogProvider,

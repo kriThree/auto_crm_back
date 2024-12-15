@@ -8,8 +8,8 @@ import (
 
 func (s AdminStorage) GetOne(ctx context.Context, userId int64) (id int64, err error){
 
-	const op = "postgres.roles.client.GetById"
-
+	const op = "postgres.roles.admin.GetById"
+	
 	stmt, err := s.db.PrepareContext(ctx, `
 		SELECT id
 		FROM admins

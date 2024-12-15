@@ -93,3 +93,25 @@ func (s OperationService) GetForAutoservice(ctx context.Context, autoserviceId i
 
 	return operations, nil
 }
+func (s OperationService) GetById(ctx context.Context, id int64) (models.Operation, error) {
+
+	const op = "service.operation.GetById"
+
+	log := s.l.With(
+		slog.String("op", op),
+		slog.Int64("id", id),
+	)
+
+	log.Info("Start getting operation by id")
+
+	storageOperation, err := s.opP.GetById(ctx, id)
+	if err != nil {
+		return models.Operation{}, err
+	}
+
+	log.Info("Get operation by id success",
+		slog.Int64("id", id),
+	)
+
+	return s.fromStorageToDomainWithQuery(ctx,storageOperation)
+}

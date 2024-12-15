@@ -21,7 +21,7 @@ func (a *App) MustRun() {
 
 	log := a.l.With(slog.String("op", op))
 
-	cmd := exec.Command("swag", "init", "-g", "cmd/crm/main.go", "--instanceName", "crm_swagger")
+	cmd := exec.Command("swag", "init", "-g", "cmd/crm/main.go")
 	log.Debug("cmd", slog.String("cmd", cmd.String()))
 	output, err := cmd.CombinedOutput()
 

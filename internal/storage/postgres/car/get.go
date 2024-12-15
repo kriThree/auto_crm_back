@@ -29,7 +29,7 @@ func (s CarStorage) GetByClientId(ctx context.Context, userId int64) ([]storage_
 	var cars []storage_models.Car
 	for rows.Next() {
 		var car storage_models.Car
-		err = rows.Scan(&car.Id, &car.ClientId,&car.Number,&car.Description,&car.ClientId)
+		err = rows.Scan(&car.Id, &car.Number,&car.Description,&car.ClientId)
 
 		if err != nil {
 			return nil, fmt.Errorf("%s : %w", op, err)

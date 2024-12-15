@@ -10,6 +10,7 @@ type CatalogRepo interface {
 	Update(ctx context.Context, dto storage_models.UpdateCatalogDto) error
 	GetForAdmin(ctx context.Context, adminId int64) (catalogs []Catalog, err error)
 	Get(ctx context.Context) (catalogs []Catalog, err error)
+	GetById(ctx context.Context, id int64) (catalog Catalog, err error)
 	Delete(ctx context.Context, id int64) error
 }
 
